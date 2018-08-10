@@ -6,8 +6,8 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import os
 import errno
+import json
 from scrapy.pipelines.files import FilesPipeline
-from scrapy.exporters import JsonLinesItemExporter
 from WebScraper.items import WebscraperItem
 from WebScraper.items import jsonItem
 from scrapy import Request
@@ -23,44 +23,42 @@ class WebscraperPipeline(FilesPipeline):
 			
 			
 		if 'pdfURL' in item:
-			print(item['pdfURL'])
-			print(type(item['pdfURL']))
 			request = Request(url=item['pdfURL'])
 			request.meta['file_dir'] = item['caseName']+'\\'+item['fileName']
 			yield request
 			
 	def file_path(self, request, response=None, info=None):
 	
-		if not isinstance(item, WebscraperItem):
-			return item
-		FILES_STORE = 'D:\\Documents\\Job\\WebScraper'
+		FILES_STORE = 'D:\\Documents\\Job\\WebScraper\\PDF'
 		filename = request.url.split('/')[-1]
 		filename = filename[:50].rstrip()
 		filedir = request.meta['file_dir']
-		filepath = FILES_STORE+'\\'+filedir + '\\' + filename		
+		filepath = FILES_STORE+'\\'+filedir + '\\' + filename	
+
 		return filepath
 		
 	
-class jsonItemExporter(JsonLinesItemExporter):
+class jsonPipeline(object):
 
-	def __init__(self, file, **kwargs):
-		self._configure(kwargs)
-		self.file = file
-		self.encoder = json.JSONEncoder(**kwargs)
-		self.first_item = True
-
-	def start_exporting(self):
+	def open_spider(self, spider):
+		self.file = open('NotData.json', 'w')
 		self.file.write("[")
 
-	def finish_exporting(self):
+	def close_spider(self, spider):
 		self.file.write("]")
+		self.file.close()
 
-	def export_item(self, item):
+	def process_item(self, item, spider):
 		if not isinstance(item, jsonItem):
 			return item
-		if self.first_item:
-			self.first_item = False
-		else:
-			self.file.write(',\n')
-		itemdict = dict(self._get_serialized_fields(item))
-		self.file.write(self.encoder.encode(itemdict))
+			
+		
+		line = json.dumps(
+			dict(item),
+			sort_keys=False,
+			indent=4,
+			separators=(',', ': ')
+		) + ",\n"
+
+		self.file.write(line)
+		return item

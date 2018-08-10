@@ -19,4 +19,4 @@ class WebscraperItem(scrapy.Item):
 class jsonItem(scrapy.Item):
     # define the fields for your item here like:
 	caseName = scrapy.Field()
-	files = scrapy.Field()
+	fileList = scrapy.Field()

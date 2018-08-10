@@ -25,6 +25,8 @@ NEWSPIDER_MODULE = 'WebScraper.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
+DEPTH_PRIORITY = 1
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
@@ -69,12 +71,12 @@ COOKIES_ENABLED = False
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
+	'WebScraper.pipelines.jsonPipeline': 1,
     'scrapy.pipelines.files.FilesPipeline': 2,
-	'WebScraper.pipelines.WebscraperPipeline': 3,
-	'WebScraper.pipelines.jsonItemExporter': 4
+	'WebScraper.pipelines.WebscraperPipeline': 3
 }
 MEDIA_ALLOW_REDIRECTS = True
-FILES_STORE = 'D:\\Documents\\Job\\WebScraper'
+FILES_STORE = 'D:\\Documents\\Job\\WebScraper\\PDF'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
